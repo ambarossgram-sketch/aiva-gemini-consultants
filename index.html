@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIVA ИИ-Консультанты с Google Gemini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="app" class="max-w-md mx-auto bg-gray-50 min-h-screen">
+        <!-- API Key Setup Modal -->
+        <div id="apiKeyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-sm mx-4">
+                <h3 class="text-lg font-bold mb-4">Настройка Google Gemini ИИ</h3>
+                <p class="text-sm text-gray-600 mb-4">Введите Google Gemini API ключ для активации экспертов:</p>
+                <input 
+                    id="apiKeyInput" 
+                    type="password" 
+                    placeholder="AIza..." 
+                    class="w-full p-3 border rounded-lg mb-4 text-sm"
+                />
+                <div class="flex space-x-2">
+                    <button id="saveApiKey" class="flex-1 bg-blue-500 text-white p-3 rounded-lg">Сохранить</button>
+                    <button id="skipApiKey" class="flex-1 bg-gray-300 p-3 rounded-lg">Демо режим</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    Получите бесплатный ключ на <a href="https://aistudio.google.com" target="_blank" class="text-blue-500">aistudio.google.com</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="bg-white shadow-sm px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-bold text-gray-900">ИИ Эксперты</span>
+                    <div id="connectionStatus" class="text-xs text-gray-500">Демо режим</div>
+                </div>
+            </div>
+            <button id="settingsButton" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div id="content" class="px-4 py-6 pb-20">
+            <!-- Home Page -->
+            <div id="homePage">
+                <div class="text-center py-6">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">ИИ-Консультанты</h1>
+                    <p class="text-gray-600">Реальные эксперты на базе Google Gemini</p>
+                    <div id="aiStatus" class="text-sm mt-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                        Демо режим - ограниченные ответы
+                    </div>
+                </div>
+
+                <div class="grid gap-4">
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="marketing-basics">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-blue-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13l4-4 4 4 6-6m0 0l-3 3m3-3v3"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Основы маркетинга</h3>
+                                    <p class="text-sm text-gray-500">Стратегический маркетолог с 15+ летним опытом</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="social-media">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-purple-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="18" cy="5" r="3"></circle>
+                                        <circle cx="6" cy="12" r="3"></circle>
+                                        <circle cx="18" cy="19" r="3"></circle>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">SMM эксперт</h3>
+                                    <p class="text-sm text-gray-500">Специалист по социальным сетям и вирусному контенту</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="context-targeting">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-green-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="6"></circle>
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Реклама эксперт</h3>
+                                    <p class="text-sm text-gray-500">Сертифицированный специалист по Google/Yandex Ads</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="web-design">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-pink-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3v18M15 8a4 4 0 018 0v1a4 4 0 01-8 0V8z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">UX/UI дизайнер</h3>
+                                    <p class="text-sm text-gray-500">Эксперт по конверсии и пользовательскому опыту</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="ai-content">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-orange-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                        <circle cx="12" cy="13" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">ИИ эксперт</h3>
+                                    <p class="text-sm text-gray-500">Специалист по нейросетям и автоматизации контента</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow" data-id="prompting">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-500 p-2 rounded-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Промпт-инженер</h3>
+                                    <p class="text-sm text-gray-500">Эксперт по продвинутым техникам промптинга</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-green-500">● Онлайн</div>
+                                <svg class="w-5 h-5 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module Page -->
+            <div id="modulePage" style="display: none;">
+                <div class="flex items-center space-x-3 pb-4 border-b border-gray-200">
+                    <button id="backButton" class="text-blue-500 hover:text-blue-600">
+                        ← Назад
+                    </button>
+                </div>
+
+                <div id="moduleHeader" class="text-center py-4">
+                    <!-- Будет заполняться динамически -->
+                </div>
+
+                <div id="popularQuestions" class="mb-4">
+                    <h3 class="font-medium text-gray-900 mb-3">Популярные вопросы:</h3>
+                    <div id="questionsList" class="space-y-2">
+                        <!-- Будет заполняться динамически -->
+                    </div>
+                </div>
+
+                <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 mb-4">
+                    <!-- История чата -->
+                </div>
+
+                <div id="loadingIndicator" style="display: none;" class="flex justify-start mb-4">
+                    <div class="bg-white border rounded-lg p-3">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                            <span id="expertName" class="text-xs font-medium text-gray-600">Gemini Эксперт</span>
+                        </div>
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4">
+                    <div class="flex space-x-2 mb-3">
+                        <input 
+                            id="messageInput"
+                            type="text" 
+                            placeholder="Задайте вопрос эксперту..."
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            autocomplete="off"
+                            autocorrect="off" 
+                            spellcheck="false"
+                        />
+                        <button 
+                            id="sendButton"
+                            class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            Отправить
+                        </button>
+                    </div>
+                    <div class="flex justify-center">
+                        <button 
+                            id="bottomBackButton"
+                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                            <span>Назад к экспертам</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация
+        let currentModule = null;
+        let chatMessages = {};
+        let isLoading = false;
+        let geminiApiKey = localStorage.getItem('gemini_api_key');
+        
+        // Системные промпты для каждого эксперта
+        const expertPrompts = {
+            'marketing-basics': `Ты - стратегический маркетолог с 15+ летним опытом.
+
+ТВОЯ ЭКСПЕРТИЗА:
+- Анализ целевой аудитории и сегментирование
+- Customer Journey Mapping
+- Построение воронок продаж и оптимизация конверсий
+- KPI и метрики (LTV, CAC, ARPU, Churn Rate)
+- Позиционирование и брендинг
+- Конкурентный анализ и SWOT-анализ
+- A/B тестирование и анализ данных
+- Ценообразование и стратегии роста
+
+СТИЛЬ ОБЩЕНИЯ:
+- Профессиональный, но понятный
+- Всегда привожу конкретные примеры и цифры
+- Даю пошаговые инструкции
+- Задаю уточняющие вопросы о специфике бизнеса
+
+ВСЕГДА:
+- Начинай с диагностики ситуации
+- Предлагай конкретные метрики для измерения
+- Давай готовые шаблоны и чек-листы
+- Указывай временные рамки для реализации
+
+НИКОГДА НЕ:
+- Не давай общие советы без специфики
+- Не выходи за рамки маркетинга в SMM, рекламу или дизайн
+- Не используй жаргон без объяснений`,
+
+            'social-media': `Ты - SMM эксперт с 10+ летним опытом продвижения в социальных сетях и знаниями актуальных трендов 2025 года.
+
+ТВОЯ ЭКСПЕРТИЗА МЕЖДУНАРОДНЫЕ ПЛАТФОРМЫ:
+- Instagram: алгоритм 2025, Reels, Stories, новые функции
+- TikTok: актуальные тренды 2025, вирусный контент, монетизация
+- YouTube: Shorts, долгий контент, аналитика 2025
+- X (бывший Twitter): актуальные фичи, продвижение
+- LinkedIn: B2B контент, нетворкинг, алгоритм 2025
+- Pinterest: визуальный маркетинг, Shopping features
+
+РОССИЙСКИЕ И СНГ ПЛАТФОРМЫ:
+- VKontakte: новые функции 2025, VK Clips, сообщества, реклама
+- Одноклассники: алгоритмы 2025, таргетинг, контент
+- Яндекс.Дзен: рекомендательный алгоритм, монетизация
+- RuTube: продвижение, аналитика, особенности платформы
+- Telegram: каналы, боты, мини-приложения 2025, продвижение
+- Discord: сообщества, маркетинг в игейминге
+
+НИШЕВЫЕ И НОВЫЕ ПЛАТФОРМЫ:
+- BeReal: аутентичный контент, тренды 2025
+- Lemon8: визуальный контент, SEO оптимизация
+- Clubhouse: аудио-контент, нетворкинг
+- Threads от Meta: текстовый контент, продвижение
+
+ЭКСПЕРТНЫЕ НАПРАВЛЕНИЯ:
+- Контент-планирование под алгоритмы 2025
+- Инфлюенс-маркетинг и коллаборации
+- Аналитика и метрики всех платформ
+- Кроссплатформенные стратегии
+- Монетизация контента
+- Compliance и модерация контента
+
+СТИЛЬ ОБЩЕНИЯ:
+- Современный, в тренде 2025
+- Использую актуальную терминологию всех платформ
+- Привожу примеры успешных кампаний
+- Даю конкретные цифры по метрикам и бенчмаркам
+
+ВСЕГДА:
+- Уточняю нишу, аудиторию и географию
+- Привожу актуальные тренды 2025 года
+- Даю готовые идеи контента под каждую платформу
+- Объясняю специфику алгоритмов и правил
+- Учитываю законодательные особенности разных стран
+
+НИКОГДА НЕ:
+- Не касаюсь контекстной рекламы (это к рекламному эксперту)
+- Не даю советы по веб-дизайну (это к дизайнеру)
+- Не рекомендую устаревшие методы
+- Не нарушаю правила платформ`,
+
+            'context-targeting': `Ты - сертифицированный специалист по контекстной и таргетированной рекламе с 12+ летним опытом и знанием всех актуальных рекламных платформ 2025 года.
+
+МЕЖДУНАРОДНЫЕ РЕКЛАМНЫЕ ПЛАТФОРМЫ:
+- Google Ads: поиск, КМС, YouTube, шоппинг, Performance Max, новые фичи 2025
+- Microsoft Ads (Bing): настройки, импорт из Google, особенности
+- Facebook/Instagram/WhatsApp Ads: все форматы, Advantage+, Shops Ads
+- TikTok Ads: Spark Ads, Shopping Ads, новые форматы 2025
+- Twitter Ads (X Ads): актуальные возможности, таргетинг 2025
+- LinkedIn Ads: B2B реклама, Lead Gen Forms, конверсионные кампании
+- Pinterest Ads: Shopping, Idea Ads, сезонные кампании
+- Snapchat Ads: AR реклама, локальный таргетинг
+
+РОССИЙСКИЕ РЕКЛАМНЫЕ ПЛАТФОРМЫ:
+- Яндекс.Директ: поиск, РСЯ, автоматические стратегии, новинки 2025
+- VK Ads: таргетинг, Clips реклама, ретаргетинг, аналитика
+- myTarget (VK): кроссплатформенная реклама, lookalike
+- Одноклассники: реклама в ленте, Stories, таргетинг по интересам
+- Telegram Ads: каналы, боты, нативная реклама
+
+МАРКЕТПЛЕЙСЫ И E-COMMERCE:
+- Яндекс.Маркет: товарные кампании, Покупки, аналитика
+- Wildberries: продвижение, аукционы, аналитика продаж
+- OZON: реклама продавца, баннеры, поисковое продвижение  
+- AliExpress: продвижение для российских продавцов
+- Avito: объявления, Бизнес-профиль, продвижение услуг
+- Юла: локальная реклама, категорийное продвижение
+
+НИШЕВЫЕ ПЛАТФОРМЫ:
+- РБК: B2B реклама, финансовая тематика
+- Rambler: контекст и медийка, интеграции
+- Zen.yandex: нативная реклама в рекомендациях
+- Rutube: видеореклама, интеграции с ТВ
+
+ЭКСПЕРТНЫЕ НАПРАВЛЕНИЯ:
+- Семантическое ядро и кластеризация
+- Автоматизация ставок и стратегии 2025
+- Кроссплатформенная аналитика и атрибуция
+- ROAS и LTV оптимизация
+- Ретаргетинг и кастомные аудитории
+- Compliance с российским законодательством
+
+СЕРТИФИКАЦИИ И КВАЛИФИКАЦИИ:
+- Google Ads certified (все специализации)
+- Яндекс.Директ профессионал
+- Facebook Blueprint certified  
+- VK рекламные решения
+- TikTok for Business certified
+
+СТИЛЬ ОБЩЕНИЯ:
+- Технический, но доступный
+- Привожу кейсы с конкретными цифрами и ROI
+- Даю пошаговые инструкции и чек-листы
+- Объясняю логику и обоснование каждого решения
+
+ВСЕГДА:
+- Уточняю бюджет, географию и KPI
+- Рекомендую тестовые стратегии и масштабирование
+- Привожу бенчмарки по отраслям и регионам
+- Проверяю соответствие требованиям площадок
+- Предупреждаю о рисках и ограничениях
+
+НИКОГДА НЕ:
+- Не касаюсь SEO или органического SMM
+- Не создаю креативы (это к дизайнерам)
+- Не рекомендую нарушения правил платформ
+- Не даю гарантий по результатам без данных`,
+
+            'web-design': `Ты - UX/UI дизайнер с 12+ летним опытом, экспертными знаниями современных тrendов 2025 года и всех актуальных инструментов для создания визуального контента.
+
+ДИЗАЙН ЭКСПЕРТИЗА:
+- UX исследования и пользовательские тесты
+- UI дизайн адаптивных интерфейсов
+- Дизайн лендингов с высокой конверсией  
+- Mobile First и Progressive Web Apps
+- A/B тестирование дизайна и интерфейсов
+- Дизайн-системы и UI-киты
+- Микроинтеракции и анимации
+- CRO (Conversion Rate Optimization)
+- Accessibility (a11y) и инклюзивный дизайн
+
+БЕСПЛАТНЫЕ ИНСТРУМЕНТЫ ДЛЯ ДИЗАЙНА:
+ГРАФИЧЕСКИЕ РЕДАКТОРЫ:
+- Figma (бесплатно до 3 проектов)
+- Canva (бесплатная версия)
+- GIMP (полностью бесплатный)
+- Paint.NET (Windows)
+- Photopea (браузерный Photoshop)
+- Krita (для иллюстраций)
+
+СОЗДАНИЕ ИЗОБРАЖЕНИЙ С ИИ (БЕСПЛАТНЫЕ ЛИМИТЫ):
+- Leonardo.AI (150 токенов/день)
+- Playground AI (500 изображений/день)  
+- Microsoft Bing Image Creator
+- Google ImageFX
+- Stable Diffusion (через Hugging Face)
+- Lexica.art (поиск + генерация)
+- DeepAI (бесплатные лимиты)
+
+СОЗДАНИЕ ВИДЕО (БЕСПЛАТНЫЕ ОПЦИИ):
+- DaVinci Resolve (профессиональный редактор)
+- OpenShot (простой редактор)
+- Shotcut (кроссплатформенный)
+- CapCut (мобильный/веб)
+- Clipchamp (встроен в Windows)
+- Runway ML (бесплатные лимиты на ИИ видео)
+- Pika Labs (бесплатные генерации)
+- Stable Video Diffusion
+
+ИКОНКИ И ГРАФИКА:
+- Lucide (бесплатные иконки)
+- Heroicons (от Tailwind CSS)
+- Feather Icons
+- Phosphor Icons  
+- Unsplash (фотографии)
+- Pexels (фото и видео)
+- Pixabay (универсальная библиотека)
+
+ПРОТОТИПИРОВАНИЕ И WIREFRAMING:
+- Figma (бесплатно)
+- POP (бумажные прототипы)
+- Marvel App (бесплатный план)
+- InVision (ограниченно бесплатно)
+- Framer (бесплатный план)
+
+ТЕСТИРОВАНИЕ И АНАЛИТИКА:
+- Hotjar (бесплатный план)
+- Google Analytics
+- Microsoft Clarity (полностью бесплатно)
+- Maze (пользовательское тестирование)
+
+СТИЛЬ ОБЩЕНИЯ:
+- Визуально мыслящий с практическими примерами
+- Привожу конкретные инструкции и настройки
+- Показываю результаты A/B тестов
+- Рекомендую бесплатные альтернативы дорогим инструментам
+- Даю готовые промпты для ИИ-генерации
+
+ВСЕГДА:
+- Спрашиваю о целевом действии и конверсиях
+- Предлагаю бесплатные инструменты в первую очередь
+- Даю конкретные размеры, форматы, настройки
+- Объясняю психологию восприятия и UX принципы
+- Привожу примеры готовых решений
+
+ЗНАНИЯ ТРЕНДОВ 2025:
+- Neomorphism и Glassmorphism эволюция
+- AI-первый дизайн интерфейсов
+- Sustainable design принципы
+- Voice UI и gesture-based интерфейсы
+- Персонализированные дизайн-системы
+
+НИКОГДА НЕ:
+- Не занимаюсь программированием (только дизайн)
+- Не касаюсь настройки рекламы (это к рекламному эксперту)
+- Не рекомендую платные решения без бесплатных альтернатив
+- Не даю советы без учета UX принципов`,
+
+            'ai-content': `Ты - эксперт по ИИ-инструментам для создания контента с 5+ летним опытом.
+
+ТВОЯ ЭКСПЕРТИЗА:
+- Генерация изображений: Midjourney, DALL-E, Stable Diffusion
+- Видео ИИ: Runway, Pika Labs, Luma Dream Machine
+- Текстовые ИИ: GPT-4, Claude, Gemini
+- Аудио ИИ: ElevenLabs, Murf, синтез речи
+- Автоматизация: Zapier, Make, n8n
+- Промпт-инжиниринг для разных моделей
+- Обработка и пост-продакшн
+- Этичное использование ИИ
+
+АКТУАЛЬНЫЕ ИНСТРУМЕНТЫ 2024:
+- Новейшие модели и обновления
+- Сравнение качества и стоимости
+- Интеграции и API
+- Workflow оптимизация
+
+СТИЛЬ ОБЩЕНИЯ:
+- Технологичный, но практичный
+- Привожу готовые промпты
+- Объясняю тренды и новинки
+- Делюсь лайфхаками и секретами
+
+ВСЕГДА:
+- Даю конкретные промпты для копирования
+- Рекомендую бесплатные альтернативы
+- Объясняю параметры и настройки
+- Предупреждаю о ограничениях инструментов
+
+НИКОГДА НЕ:
+- Не касаюсь программирования ИИ
+- Не обещаю невозможного качества
+- Не рекомендую нарушение авторских прав`,
+
+            'prompting': `Ты - промпт-инженер с глубокими знаниями архитектур ИИ и продвинутых техник.
+
+ТВОЯ ЭКСПЕРТИЗА:
+- Chain-of-Thought (CoT) рассуждения
+- Few-Shot и Zero-Shot промптинг
+- Tree-of-Thought для сложных задач
+- Role-Playing и персонализация ИИ
+- Системные промпты для чат-ботов
+- Prompt injection защита
+- Evaluation и тестирование промптов
+- Продвинутые техники (ReAct, ToT, GoT)
+
+ТЕХНИЧЕСКИЕ ЗНАНИЯ:
+- Архитектуры трансформеров
+- Токенизация и context windows
+- Temperature, Top-p настройки
+- Особенности GPT, Claude, Gemini
+- Ограничения и возможности моделей
+
+СТИЛЬ ОБЩЕНИЯ:
+- Системный и структурированный
+- Объясняю логику каждого элемента промпта
+- Привожу примеры до и после оптимизации
+- Даю готовые шаблоны для копирования
+
+ВСЕГДА:
+- Анализирую структуру задачи
+- Предлагаю несколько вариантов промптов
+- Объясняю почему работает каждая техника
+- Даю советы по итерации и улучшению
+
+НИКОГДА НЕ:
+- Не касаюсь технической разработки ИИ
+- Не обещаю 100% точности
+- Не рекомендую манипулятивные техники`
+        };
+
+        // Модули экспертов
+        const modules = {
+            'marketing-basics': {
+                title: 'Стратегический маркетолог',
+                color: 'bg-blue-500',
+                description: 'Эксперт с 15+ летним опытом по стратегиям, аналитике и росту',
+                expertName: 'Gemini Маркетолог',
+                popularQuestions: [
+                    'Как определить целевую аудиторию для нового продукта?',
+                    'Какие метрики важнее всего отслеживать в маркетинге?',
+                    'Как построить эффективную воронку продаж?',
+                    'Как провести анализ конкурентов?'
+                ]
+            },
+            'social-media': {
+                title: 'SMM эксперт',
+                color: 'bg-purple-500',
+                description: 'Специалист по соцсетям и вирусному контенту',
+                expertName: 'Gemini SMM',
+                popularQuestions: [
+                    'Как увеличить охваты в Instagram без рекламы?',
+                    'Какой контент лучше всего работает в TikTok?',
+                    'Как составить контент-план на месяц?',
+                    'Как работать с блогерами и инфлюенсерами?'
+                ]
+            },
+            'context-targeting': {
+                title: 'Реклама эксперт',
+                color: 'bg-green-500',
+                description: 'Сертифицированный специалист по Google Ads и Яндекс.Директ',
+                expertName: 'Gemini Ads',
+                popularQuestions: [
+                    'Как снизить стоимость клика в Google Ads?',
+                    'Какие аудитории лучше работают в Facebook?',
+                    'Как правильно собрать семантику для Директа?',
+                    'Как настроить эффективный ретаргетинг?'
+                ]
+            },
+            'web-design': {
+                title: 'UX/UI дизайнер',
+                color: 'bg-pink-500',
+                description: 'Эксперт по конверсии и пользовательскому опыту',
+                expertName: 'Gemini Design',
+                popularQuestions: [
+                    'Как улучшить конверсию лендинга через дизайн?',
+                    'Какие цвета использовать для e-commerce сайта?',
+                    'Как сделать удобную мобильную навигацию?',
+                    'Как провести A/B тест дизайна?'
+                ]
+            },
+            'ai-content': {
+                title: 'ИИ эксперт',
+                color: 'bg-orange-500',
+                description: 'Специалист по нейросетям и автоматизации контента',
+                expertName: 'Gemini AI',
+                popularQuestions: [
+                    'Как создать качественные промпты для Midjourney?',
+                    'Какие ИИ-инструменты лучше для видео контента?',
+                    'Как автоматизировать создание постов с помощью ИИ?',
+                    'Какие новые ИИ-модели появились?'
+                ]
+            },
+            'prompting': {
+                title: 'Промпт-инженер',
+                color: 'bg-indigo-500',
+                description: 'Эксперт по продвинутым техникам работы с ИИ',
+                expertName: 'Gemini Prompt',
+                popularQuestions: [
+                    'Как написать промпт для анализа конкурентов?',
+                    'Какие техники промптинга самые эффективные?',
+                    'Как создать системный промпт для чат-бота?',
+                    'Как использовать Chain-of-Thought рассуждения?'
+                ]
+            }
+        };
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            checkApiKey();
+        });
+
+        function checkApiKey() {
+            if (!geminiApiKey) {
+                document.getElementById('apiKeyModal').style.display = 'flex';
+            } else {
+                updateConnectionStatus(true);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            const aiStatus = document.getElementById('aiStatus');
+            
+            if (connected) {
+                statusElement.textContent = 'Google Gemini активен';
+                statusElement.className = 'text-xs text-green-600';
+                aiStatus.textContent = 'Google Gemini активен - бесплатные 1.5M запросов/месяц';
+                aiStatus.className = 'text-sm mt-2 px-3 py-1 rounded-full bg-green-100 text-green-800';
+            } else {
+                statusElement.textContent = 'Демо режим';
+                statusElement.className = 'text-xs text-gray-500';
+                aiStatus.textContent = 'Демо режим - ограниченные ответы';
+                aiStatus.className = 'text-sm mt-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-800';
+            }
+        }
+
+        function initializeApp() {
+            // Обработчики модального окна API ключа
+            document.getElementById('saveApiKey').addEventListener('click', function() {
+                const apiKey = document.getElementById('apiKeyInput').value.trim();
+                if (apiKey.startsWith('AIza')) {
+                    localStorage.setItem('gemini_api_key', apiKey);
+                    geminiApiKey = apiKey;
+                    document.getElementById('apiKeyModal').style.display = 'none';
+                    updateConnectionStatus(true);
+                } else {
+                    alert('Пожалуйста, введите корректный Google Gemini API ключ (начинается с AIza...)');
+                }
+            });
+
+            document.getElementById('skipApiKey').addEventListener('click', function() {
+                document.getElementById('apiKeyModal').style.display = 'none';
+                updateConnectionStatus(false);
+            });
+
+            // Кнопка настроек
+            document.getElementById('settingsButton').addEventListener('click', function() {
+                document.getElementById('apiKeyModal').style.display = 'flex';
+                document.getElementById('apiKeyInput').value = geminiApiKey || '';
+            });
+
+            // Обработчики кликов по модулям
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const moduleId = this.getAttribute('data-id');
+                    openModule(moduleId);
+                });
+            });
+
+            document.getElementById('backButton').addEventListener('click', function() {
+                showHomePage();
+            });
+
+            // Добавляем обработчик для нижней кнопки "Назад"
+            document.getElementById('bottomBackButton').addEventListener('click', function() {
+                showHomePage();
+            });
+
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            sendButton.addEventListener('click', function() {
+                sendMessage();
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+
+        function openModule(moduleId) {
+            currentModule = moduleId;
+            const module = modules[moduleId];
+            
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('modulePage').style.display = 'block';
+
+            const headerHtml = `
+                <div class="${module.color} p-3 rounded-lg inline-block mb-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900 mb-1">${module.title}</h2>
+                <p class="text-gray-600 text-sm">${module.description}</p>
+                ${geminiApiKey ? '<div class="text-xs text-green-600 mt-2">● Google Gemini активен</div>' : '<div class="text-xs text-yellow-600 mt-2">⚠ Демо режим - ограниченные ответы</div>'}
+            `;
+            document.getElementById('moduleHeader').innerHTML = headerHtml;
+
+            const questionsHtml = module.popularQuestions.map(question => 
+                `<button class="question-btn w-full text-left p-3 bg-blue-50 rounded-lg text-blue-700 text-sm hover:bg-blue-100 transition-colors">${question}</button>`
+            ).join('');
+            document.getElementById('questionsList').innerHTML = questionsHtml;
+
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('messageInput').value = this.textContent;
+                    document.getElementById('messageInput').focus();
+                });
+            });
+
+            document.getElementById('expertName').textContent = module.expertName;
+            displayChatHistory(moduleId);
+
+            const hasMessages = chatMessages[moduleId] && chatMessages[moduleId].length > 0;
+            document.getElementById('popularQuestions').style.display = hasMessages ? 'none' : 'block';
+        }
+
+        function showHomePage() {
+            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('modulePage').style.display = 'none';
+            currentModule = null;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isLoading) return;
+
+            input.value = '';
+            addUserMessage(message);
+            document.getElementById('popularQuestions').style.display = 'none';
+            showLoading();
+
+            let response;
+            if (geminiApiKey) {
+                response = await getGeminiResponse(message);
+            } else {
+                response = getDemoResponse(message);
+            }
+
+            hideLoading();
+            addAIMessage(response);
+        }
+
+        // ГЛАВНОЕ ОТЛИЧИЕ - используем Google Gemini API
+        async function getGeminiResponse(userMessage) {
+            try {
+                const systemPrompt = expertPrompts[currentModule];
+                const fullPrompt = `${systemPrompt}\n\nВопрос пользователя: ${userMessage}`;
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: fullPrompt
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error?.message || 'Unknown error'}`);
+                }
+
+                const data = await response.json();
+                
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
+                    throw new Error('Invalid response format from Gemini API');
+                }
+
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('Gemini API error:', error);
+                return `Извините, произошла ошибка при обращении к Google Gemini. Попробуйте позже или проверьте настройки API ключа.\n\nОшибка: ${error.message}`;
+            }
+        }
+
+        // Демо ответы остаются теми же
+        function getDemoResponse(message) {
+            const demoResponses = {
+                'marketing-basics': [
+                    '🎯 ДЕМО ОТВЕТ от Gemini маркетинг-эксперта:\n\nДля определения ЦА рекомендую:\n\n1. Анализ текущих клиентов\n2. Интервью с 10-15 покупателями\n3. Создание персон\n4. Валидация через опросы\n\n📊 Подключите Google Gemini для детального разбора вашего случая (бесплатно 1.5M запросов/месяц).',
+                    '📈 ДЕМО ОТВЕТ:\n\nКлючевые метрики для отслеживания:\n\n• CAC (стоимость привлечения)\n• LTV (жизненная ценность)\n• Conversion Rate\n• ROAS\n\n💡 В полной версии с Gemini дам конкретные значения и способы измерения.'
+                ],
+                'social-media': [
+                    '📱 ДЕМО ОТВЕТ от Gemini SMM-эксперта:\n\nДля роста охватов в Instagram:\n\n• Используйте актуальные хештеги\n• Публикуйте Reels ежедневно\n• Взаимодействуйте в комментариях\n• Создавайте Stories с опросами\n\n🔥 В полной версии с Gemini дам готовый план на месяц.',
+                    '🎬 ДЕМО ОТВЕТ:\n\nДля TikTok работает:\n\n• Образовательный контент\n• Тренды + ваша ниша\n• Короткие хуки в начале\n• Музыкальные тренды\n\n⚡ Подключите Gemini для детального разбора алгоритма.'
+                ],
+                'context-targeting': [
+                    '💰 ДЕМО ОТВЕТ от Gemini рекламы-эксперта:\n\nДля снижения CPC:\n\n• Улучшите показатель качества\n• Добавьте минус-слова\n• Используйте точное соответствие\n• Настройте расписание показов\n\n📊 В полной версии с Gemini покажу кейс со снижением на 40%.',
+                    '🎯 ДЕМО ОТВЕТ:\n\nЛучшие аудитории Facebook:\n\n• Lookalike 1% от покупателей\n• Ретаргетинг посетителей сайта\n• Интересы + поведение\n• Custom Audiences\n\n🚀 Подключите Gemini для готовых настроек.'
+                ],
+                'web-design': [
+                    '🎨 ДЕМО ОТВЕТ от Gemini UX/UI эксперта:\n\nДля роста конверсии лендинга:\n\n• Упростите форму заявки\n• Добавьте социальные доказательства\n• Улучшите заголовок\n• Оптимизируйте CTA кнопку\n\n📈 В полной версии с Gemini дам конкретный план с ожидаемым ростом.',
+                    '🌈 ДЕМО ОТВЕТ:\n\nВыбор цветов для e-commerce:\n\n• Синий - доверие\n• Оранжевый - действие\n• Зеленый - безопасность\n• Красный - срочность\n\n🎯 Подключите Gemini для A/B тестов цветов.'
+                ],
+                'ai-content': [
+                    '🤖 ДЕМО ОТВЕТ от Gemini ИИ-эксперта:\n\nПромпт для Midjourney:\n\n"Product photo [товар], white background, professional lighting --v 6 --ar 1:1"\n\n⚡ Базовая структура промпта\n\n🧠 В полной версии с Gemini дам 50+ готовых промптов для коммерции.',
+                    '🎬 ДЕМО ОТВЕТ:\n\nЛучшие ИИ для видео:\n\n• Runway - качественные ролики\n• Pika Labs - анимации\n• Luma Dream Machine - быстрая генерация\n\n🚀 Подключите Gemini для подробного сравнения и настроек.'
+                ],
+                'prompting': [
+                    '🧠 ДЕМО ОТВЕТ от Gemini промпт-инженера:\n\nChain-of-Thought техника:\n\n"Решай задачу пошагово:\n1. Анализ проблемы\n2. Варианты решения\n3. Выбор лучшего\n4. План действий"\n\n💡 В полной версии с Gemini дам 10 продвинутых техник.',
+                    '⚡ ДЕМО ОТВЕТ:\n\nСистемный промпт для бота:\n\n"Ты - [роль] с [опыт] опытом.\nСпециализация: [навыки]\nСтиль: [тон]\nВсегда: [правила]"\n\n🎯 Подключите Gemini для готовых шаблонов под любую роль.'
+                ]
+            };
+
+            const responses = demoResponses[currentModule] || demoResponses['marketing-basics'];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function addUserMessage(message) {
+            if (!chatMessages[currentModule]) {
+                chatMessages[currentModule] = [];
+            }
+
+            const messageObj = {
+                id: Date.now(),
+                type: 'user',
+                content: message,
+                timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            chatMessages[currentModule].push(messageObj);
+            displayMessage(messageObj);
+        }
+
+        function addAIMessage(message) {
+            const messageObj = {
+                id: Date.now() + 1,
+                type: 'ai',
+                content: message,
+                timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            chatMessages[currentModule].push(messageObj);
+            displayMessage(messageObj);
+        }
+
+        function displayMessage(message) {
+            const chatContainer = document.getElementById('chatMessages');
+            
+            if (message.type === 'user') {
+                const userHtml = `
+                    <div class="flex justify-end">
+                        <div class="bg-blue-500 text-white rounded-lg p-3 max-w-xs">
+                            <p class="text-sm">${message.content}</p>
+                            <p class="text-xs opacity-75 mt-1">${message.timestamp}</p>
+                        </div>
+                    </div>
+                `;
+                chatContainer.insertAdjacentHTML('beforeend', userHtml);
+            } else {
+                const module = modules[currentModule];
+                const aiHtml = `
+                    <div class="flex justify-start mt-2">
+                        <div class="bg-white border rounded-lg p-3 max-w-sm">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="${module.color} w-4 h-4 rounded-full flex items-center justify-center">
+                                    <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 8 8">
+                                        <circle cx="4" cy="4" r="3"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-medium text-gray-600">${module.expertName}</span>
+                            </div>
+                            <div class="text-sm text-gray-800 whitespace-pre-wrap">${message.content}</div>
+                            <p class="text-xs text-gray-400 mt-2">${message.timestamp}</p>
+                        </div>
+                    </div>
+                `;
+                chatContainer.insertAdjacentHTML('beforeend', aiHtml);
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function displayChatHistory(moduleId) {
+            const chatContainer = document.getElementById('chatMessages');
+            chatContainer.innerHTML = '';
+            
+            if (chatMessages[moduleId]) {
+                chatMessages[moduleId].forEach(message => {
+                    displayMessage(message);
+                });
+            }
+        }
+
+        function showLoading() {
+            isLoading = true;
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('sendButton').disabled = true;
+            document.getElementById('messageInput').disabled = true;
+        }
+
+        function hideLoading() {
+            isLoading = false;
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('sendButton').disabled = false;
+            document.getElementById('messageInput').disabled = false;
+        }
+    </script>
+</body>
+</html>
